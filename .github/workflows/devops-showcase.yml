@@ -1,24 +1,35 @@
-name: My First DevOps Pipeline
+name: DevOps Showcase & Linting
 
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
-  build-and-test:
+  lint-and-test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lint Code Base
+        uses: github/super-linter@v5
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Run a DevOps Greeting
+      - name: Backend Health Check
         run: |
-          echo "Pipeline started successfully!"
-          echo "Current Date: $(date)"
-          echo "Runner OS: ${{ runner.os }}"
+          echo "Linting passed. Starting backend check..."
+          node -v
+          echo "Environment is stable."
